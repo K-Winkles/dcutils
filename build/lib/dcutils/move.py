@@ -3,11 +3,12 @@ from retry import retry
 import os
 import requests
 import sys
+import time
 
 log = open("../move.log", "a")
 sys.stdout = log
 
-@retry(tries=-1)
+@retry(tries=-1, delay=1)
 def mv_blob(
     STORAGE_CLIENT,
     blob_name,
@@ -32,11 +33,13 @@ def mv_blob(
     source_blob = source_bucket.get_blob(blob_name)
     destination_bucket = STORAGE_CLIENT.get_bucket(new_bucket_name)
     
+    # to avoid connection errors
+    time.sleep(0.05)
+
     # get size of blob
     blob_size = source_blob.size
 
     # rewrite of blob greater than 15mb
-    
     if (blob_size > 15000000):
         url = """https://storage.googleapis.com/storage/v1/b/
                 {}/o/{}/rewriteTo/b/
