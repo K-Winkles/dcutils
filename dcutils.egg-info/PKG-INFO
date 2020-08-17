@@ -1,8 +1,8 @@
 Metadata-Version: 2.1
 Name: dcutils
-Version: 0.1
+Version: 0.2
 Summary: A simple package for data center utilities
-Home-page: https://gitlab.com/senti-techlabs/research/projects/senti-transfer-learning/-/tree/kiana-branch/data-pipeline/cloud_functions/data_center_utils
+Home-page: https://github.com/K-Winkles/dcutils
 Author: Kiana Alessandra V. Villaera
 Author-email: kiana.villaera@senti.com.ph
 License: UNKNOWN

@@ -1,6 +1,6 @@
 import datetime
 from google.cloud import storage
-from move import mv_blob
+from .move import mv_blob
 
 def mv_batch(config, SRC_BUCKET, DEST_BUCKET, DEST_BLOB, PARENT_FOLDER):
     STORAGE_CLIENT = storage.Client.from_service_account_json(config)
