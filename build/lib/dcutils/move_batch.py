@@ -23,7 +23,8 @@ def mv_batch(
     SRC_BUCKET,
     DEST_BLOB,
     DEST_BUCKET,
-    PARENT_FOLDER
+    PARENT_FOLDER,
+    depth
 ):
     logger.info('START Timestamp: {}'.format(datetime.datetime.now()))
 
@@ -31,7 +32,7 @@ def mv_batch(
     for blob in blobs:
         try:
             folders = blob.name.split('/')
-            if folders[0] == PARENT_FOLDER:
+            if PARENT_FOLDER in folders[depth]:
                 mv_blob(blob.name, DEST_BLOB + '/' + blob.name, SRC_BUCKET, DEST_BUCKET)
         except Exception as e:
             print('Error: {}'.format(e))
