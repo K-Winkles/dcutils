@@ -1,4 +1,5 @@
 from google.cloud import storage
+from tenacity import retry
 import os
 import requests
 import sys
@@ -17,6 +18,7 @@ if (logger.hasHandlers()):
 logger.addHandler(filehandler)
 logger.info('Timestamp: {}'.format(datetime.datetime.now()))
 
+@retry
 def mv_blob(
     blob_name,
     new_blob_name,
