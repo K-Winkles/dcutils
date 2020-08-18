@@ -66,5 +66,5 @@ def mv_blob(
     else:
         #copy to new destination
         new_blob = source_bucket.copy_blob(source_blob, destination_bucket, new_blob_name)
-        logger.info('rewrote {} to {}\n'.format(source_blob.name, new_blob_name))
+        logger.info('copied {} to {}\n'.format(source_blob.name, new_blob_name))
         print('copied {} to {}\n'.format(source_blob.name, new_blob_name))
