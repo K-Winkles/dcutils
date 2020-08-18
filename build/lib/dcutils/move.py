@@ -46,22 +46,25 @@ def mv_blob(
 
     # get size of blob
     blob_size = source_blob.size
-    try:
-        # rewrite of blob greater than 15mb
-        if (blob_size > 15000000):
-            url = """https://storage.googleapis.com/storage/v1/b/
-                    {}/o/{}/rewriteTo/b/
-                    {}/o/{}""".format(
-                        source_bucket, 
-                        source_blob,
-                        destination_bucket,
-                        new_blob_name)
 
+    # rewrite of blob greater than 15mb
+    if (blob_size > 15000000):
+        url = """https://storage.googleapis.com/storage/v1/b/
+                {}/o/{}/rewriteTo/b/
+                {}/o/{}""".format(
+                    source_bucket, 
+                    source_blob,
+                    destination_bucket,
+                    new_blob_name)
+        try:
             requests.post(url)
             logger.info('rewrote {} to {}\n'.format(source_blob.name, new_blob_name))
-        else:
-            #copy to new destination
-            new_blob = source_bucket.copy_blob(source_blob, destination_bucket, new_blob_name)
-            logger.info('blob {} has been moved to {}\n'.format(source_blob.name, new_blob.name))
-    except ConnectionError as e:
-        logger.info('Error: {}'.format(e))
+            print('rewrote {} to {}\n'.format(source_blob.name, new_blob_name))
+        except Exception as e:
+            logger.info('Error: {}'.format(e))
+            print('Error: {}'.format(e))
+    else:
+        #copy to new destination
+        new_blob = source_bucket.copy_blob(source_blob, destination_bucket, new_blob_name)
+        logger.info('rewrote {} to {}\n'.format(source_blob.name, new_blob_name))
+        print('copied {} to {}\n'.format(source_blob.name, new_blob_name))
