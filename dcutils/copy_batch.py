@@ -33,13 +33,20 @@ def cp_batch(
         try:
             folders = blob.name.split('/')
             if PARENT_FOLDER in folders[depth]:
-                cp_blob(blob.name, DEST_BLOB + '/' + blob.name, SRC_BUCKET, DEST_BUCKET)
+                cp_blob(
+                    STORAGE_CLIENT,
+                    blob.name,
+                    DEST_BLOB + '/' + blob.name,
+                    SRC_BUCKET,
+                    DEST_BUCKET
+                    )
         except Exception as e:
             print('Error: {}'.format(e))
             logger.info('Error: {}'.format(e))
             
 @retry(wait=wait_fixed(2), stop=stop_after_attempt(3))
 def cp_blob(
+    STORAGE_CLIENT,
     blob_name,
     new_blob_name,
     bucket_name,
