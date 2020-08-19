@@ -18,7 +18,7 @@ if (logger.hasHandlers()):
 logger.addHandler(filehandler)
 
 @retry(wait=wait_fixed(2), stop=stop_after_attempt(3))
-def mv_batch(
+def cp_batch(
     STORAGE_CLIENT,
     SRC_BUCKET,
     DEST_BLOB,
@@ -33,13 +33,13 @@ def mv_batch(
         try:
             folders = blob.name.split('/')
             if PARENT_FOLDER in folders[depth]:
-                mv_blob(blob.name, DEST_BLOB + '/' + blob.name, SRC_BUCKET, DEST_BUCKET)
+                cp_blob(blob.name, DEST_BLOB + '/' + blob.name, SRC_BUCKET, DEST_BUCKET)
         except Exception as e:
             print('Error: {}'.format(e))
             logger.info('Error: {}'.format(e))
             
 @retry(wait=wait_fixed(2), stop=stop_after_attempt(3))
-def mv_blob(
+def cp_blob(
     blob_name,
     new_blob_name,
     bucket_name,
