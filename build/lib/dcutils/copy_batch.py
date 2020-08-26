@@ -64,6 +64,17 @@ def cp_blob(
     new_blob_name: str, name of file in new directory in target bucket
     ex. 'data/destination/file_name'
     """
+    logger = logging.getLogger()
+    logger.setLevel(logging.DEBUG)
+    filehandler = logging.FileHandler('move.log')
+    filehandler.setLevel(logging.INFO)
+
+    if (logger.hasHandlers()):
+        logger.handlers.clear()
+
+    logger.addHandler(filehandler)
+    logger.info('START Timestamp: {}'.format(datetime.datetime.now()))
+    
     source_bucket = STORAGE_CLIENT.get_bucket(bucket_name)
     source_blob = source_bucket.get_blob(blob_name)
     destination_bucket = STORAGE_CLIENT.get_bucket(new_bucket_name)
