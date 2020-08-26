@@ -7,16 +7,6 @@ import time
 import logging
 import datetime
 
-logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
-filehandler = logging.FileHandler('move.log')
-filehandler.setLevel(logging.INFO)
-
-if (logger.hasHandlers()):
-    logger.handlers.clear()
-
-logger.addHandler(filehandler)
-
 @retry(wait=wait_fixed(2), stop=stop_after_attempt(3))
 def cp_batch(
     STORAGE_CLIENT,
@@ -26,6 +16,15 @@ def cp_batch(
     PARENT_FOLDER,
     depth
 ):
+    logger = logging.getLogger()
+    logger.setLevel(logging.DEBUG)
+    filehandler = logging.FileHandler('move.log')
+    filehandler.setLevel(logging.INFO)
+
+    if (logger.hasHandlers()):
+        logger.handlers.clear()
+
+    logger.addHandler(filehandler)
     logger.info('START Timestamp: {}'.format(datetime.datetime.now()))
 
     blobs = STORAGE_CLIENT.list_blobs(SRC_BUCKET)

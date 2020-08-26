@@ -4,14 +4,6 @@ import datetime
 
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
-filehandler = logging.FileHandler('newly_uploaded.log')
-filehandler.setLevel(logging.INFO)
-
-if (logger.hasHandlers()):
-    logger.handlers.clear()
-
-logger.addHandler(filehandler)
-
 
 def newly_uploaded_blobs(
     STORAGE_CLIENT,
@@ -20,6 +12,13 @@ def newly_uploaded_blobs(
     PARENT_FOLDER,
     depth 
 ):
+    filehandler = logging.FileHandler('newly_uploaded.log')
+    filehandler.setLevel(logging.INFO)
+
+    if (logger.hasHandlers()):
+        logger.handlers.clear()
+
+    logger.addHandler(filehandler)
     logger.info('NEWLY UPLOADED BLOBS')
     logger.info('SOURCE BUCKET: {}'.format(SRC_BUCKET))
     logger.info('DEST_BUCKET: {}'.format(DEST_BUCKET))
