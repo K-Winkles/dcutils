@@ -1,4 +1,5 @@
 from tenacity import retry, wait_fixed, stop_after_attempt
+from requests.utils import quote
 from google.cloud import storage
 import os
 import requests
@@ -14,7 +15,8 @@ def cp_batch(
     DEST_BLOB,
     DEST_BUCKET,
     PARENT_FOLDER,
-    depth
+    depth,
+    access_token
 ):
     logger = logging.getLogger()
     logger.setLevel(logging.DEBUG)
@@ -37,33 +39,22 @@ def cp_batch(
                     blob.name,
                     DEST_BLOB + '/' + blob.name,
                     SRC_BUCKET,
-                    DEST_BUCKET
+                    DEST_BUCKET,
+                    access_token
                     )
         except Exception as e:
             print('Error: {}'.format(e))
             logger.info('Error: {}'.format(e))
             
-@retry(wait=wait_fixed(2), stop=stop_after_attempt(3))
+#@retry(wait=wait_fixed(2), stop=stop_after_attempt(3))
 def cp_blob(
     STORAGE_CLIENT,
     blob_name,
     new_blob_name,
     bucket_name,
-    new_bucket_name
+    new_bucket_name,
+    access_token
     ):
-    """
-    Function for moving files between directories or buckets. it will use GCP's copy
-    function then delete the blob from the old location.
-
-    inputs
-    -----
-    bucket_name: name of bucket
-    blob_name: str, name of file
-    ex. 'data/some_location/file_name'
-    new_bucket_name: name of bucket (can be same as original if we're just moving around directories)
-    new_blob_name: str, name of file in new directory in target bucket
-    ex. 'data/destination/file_name'
-    """
     logger = logging.getLogger()
     logger.setLevel(logging.DEBUG)
     filehandler = logging.FileHandler('move.log')
@@ -74,7 +65,7 @@ def cp_blob(
 
     logger.addHandler(filehandler)
     logger.info('START Timestamp: {}'.format(datetime.datetime.now()))
-    
+
     source_bucket = STORAGE_CLIENT.get_bucket(bucket_name)
     source_blob = source_bucket.get_blob(blob_name)
     destination_bucket = STORAGE_CLIENT.get_bucket(new_bucket_name)
@@ -86,17 +77,25 @@ def cp_blob(
 
     # rewrite of blob greater than 15mb
     if (blob_size > 15000000):
-        url = """https://storage.googleapis.com/storage/v1/b/
-                {}/o/{}/rewriteTo/b/
-                {}/o/{}""".format(
-                    source_bucket, 
-                    source_blob,
-                    destination_bucket,
+        source_bucket_url = quote(source_bucket.name, safe='')
+        source_blob_url = quote(source_blob.name, safe='')
+        destination_bucket_url = quote(destination_bucket.name, safe='')
+        new_blob_name = quote(new_blob_name, safe = '')
+        url = "https://storage.googleapis.com/storage/v1/b/{}/o/{}/rewriteTo/b/{}/o/{}".format(
+                    source_bucket_url, 
+                    source_blob_url,
+                    destination_bucket_url,
                     new_blob_name)
         try:
-            requests.post(url)
-            logger.info('rewritten {} to {}\n'.format(source_blob.name, new_blob_name))
-            print('rewritten {} to {}\n'.format(source_blob.name, new_blob_name))
+            response = requests.post(url, headers = access_token)
+            logger.info('rewriting {} to {}\n'.format(source_blob.name, new_blob_name))
+            print('rewriting {} to {}\n'.format(source_blob.name, new_blob_name))
+            if ('done' not in response.json()):
+                logger.info('rewrite operation failed with the following error: {}'.format(response))
+                print('rewrite operation failed with the following error: {}'.format(response))
+            else:
+                logger.info('rewrite operation successful!')
+                print('rewrite operation successful!')
         except Exception as e:
             logger.info('Error: {}'.format(e))
             print('Error: {}'.format(e))
