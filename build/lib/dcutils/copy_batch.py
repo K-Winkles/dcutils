@@ -20,7 +20,7 @@ def cp_batch(
 ):
     logger = logging.getLogger()
     logger.setLevel(logging.DEBUG)
-    filehandler = logging.FileHandler('move.log')
+    filehandler = logging.FileHandler('process_{}.log'.format(datetime.datetime.now()))
     filehandler.setLevel(logging.INFO)
 
     if (logger.hasHandlers()):
@@ -57,7 +57,7 @@ def cp_blob(
     ):
     logger = logging.getLogger()
     logger.setLevel(logging.DEBUG)
-    filehandler = logging.FileHandler('move.log')
+    filehandler = logging.FileHandler('process_{}.log'.format(datetime.datetime.now()))
     filehandler.setLevel(logging.INFO)
 
     if (logger.hasHandlers()):
@@ -91,8 +91,8 @@ def cp_blob(
             logger.info('rewriting {} to {}\n'.format(source_blob.name, new_blob_name))
             print('rewriting {} to {}\n'.format(source_blob.name, new_blob_name))
             if ('done' not in response.json()):
-                logger.info('rewrite operation failed with the following error: {}'.format(response))
-                print('rewrite operation failed with the following error: {}'.format(response))
+                logger.info('rewrite operation failed with the following error: {}'.format(response.text))
+                print('rewrite operation failed with the following error: {}'.format(response.text))
             else:
                 logger.info('rewrite operation successful!')
                 print('rewrite operation successful!')
