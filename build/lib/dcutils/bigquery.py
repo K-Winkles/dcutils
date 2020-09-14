@@ -31,3 +31,9 @@ def create_table(client, datasetId, name, schema):
         table = client.create_table(table)
         logger.info('{}: CREATED TABLE {}'.format(datetime.datetime.now(), name))
         print('{}: CREATED TABLE {}'.format(datetime.datetime.now(), name))
+
+def insert_row(BQ_client, table_id, row_array):
+    table = BQ_client.get_table(table_id)
+    errors = BQ_client.insert_rows(table, row_array)
+    if errors == []:
+        print('Row: {} has been added to table {}.'.format(row_array, table_id))
