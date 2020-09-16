@@ -20,7 +20,7 @@ def cp_batch(
 ):
     logger = logging.getLogger()
     logger.setLevel(logging.DEBUG)
-    filehandler = logging.FileHandler('process_{}.log'.format(datetime.datetime.now()))
+    filehandler = logging.FileHandler('process.log'.format(datetime.datetime.now()))
     filehandler.setLevel(logging.INFO)
 
     if (logger.hasHandlers()):
@@ -57,7 +57,7 @@ def cp_blob(
     ):
     logger = logging.getLogger()
     logger.setLevel(logging.DEBUG)
-    filehandler = logging.FileHandler('process_{}.log'.format(datetime.datetime.now()))
+    filehandler = logging.FileHandler('process.log'.format(datetime.datetime.now()))
     filehandler.setLevel(logging.INFO)
 
     if (logger.hasHandlers()):
