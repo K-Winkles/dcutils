@@ -12,7 +12,7 @@ def newly_uploaded_blobs(
     PARENT_FOLDER,
     depth 
 ):
-    filehandler = logging.FileHandler('newly_uploaded.log')
+    filehandler = logging.FileHandler('/tmp/newly_uploaded.log')
     filehandler.setLevel(logging.INFO)
 
     if (logger.hasHandlers()):
