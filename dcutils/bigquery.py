@@ -11,7 +11,7 @@ def create_table(client, datasetId, name, schema):
     # initialize logger
     logger = logging.getLogger()
     logger.setLevel(logging.DEBUG)
-    filehandler = logging.FileHandler('process.log'.format(datetime.datetime.now()))
+    filehandler = logging.FileHandler('/tmp/process.log'.format(datetime.datetime.now()))
     filehandler.setLevel(logging.INFO)
 
     if (logger.hasHandlers()):
