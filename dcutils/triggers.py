@@ -8,13 +8,6 @@ def newly_uploaded_blobs(
     PARENT_FOLDER,
     depth 
 ):
-    filehandler = logging.FileHandler('/tmp/newly_uploaded.log')
-    filehandler.setLevel(logging.INFO)
-
-    if (logging.hasHandlers()):
-        logging.handlers.clear()
-
-    logging.addHandler(filehandler)
     logging.info('NEWLY UPLOADED BLOBS')
     logging.info('SOURCE BUCKET: {}'.format(SRC_BUCKET))
     logging.info('DEST_BUCKET: {}'.format(DEST_BUCKET))
