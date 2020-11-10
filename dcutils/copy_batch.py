@@ -1,9 +1,7 @@
 from tenacity import retry, wait_fixed, stop_after_attempt
 from requests.utils import quote
 from google.cloud import storage
-import os
 import requests
-import sys
 import time
 import logging
 import datetime
@@ -18,16 +16,12 @@ def cp_batch(
     depth,
     access_token
 ):
-    logger = logging.getLogger()
-    logger.setLevel(logging.DEBUG)
     filehandler = logging.FileHandler('/tmp/process.log'.format(datetime.datetime.now()))
     filehandler.setLevel(logging.INFO)
 
-    if (logger.hasHandlers()):
-        logger.handlers.clear()
-
-    logger.addHandler(filehandler)
-    logger.info('START Timestamp: {}'.format(datetime.datetime.now()))
+    if (logging.hasHandlers()):
+        logging.handlers.clear()
+    logging.info('START Timestamp: {}'.format(datetime.datetime.now()))
 
     blobs = STORAGE_CLIENT.list_blobs(SRC_BUCKET)
     for blob in blobs:
@@ -44,7 +38,7 @@ def cp_batch(
                     )
         except Exception as e:
             print('Error: {}'.format(e))
-            logger.info('Error: {}'.format(e))
+            logging.info('Error: {}'.format(e))
             
 #@retry(wait=wait_fixed(2), stop=stop_after_attempt(3))
 def cp_blob(
@@ -55,16 +49,14 @@ def cp_blob(
     new_bucket_name,
     access_token
     ):
-    logger = logging.getLogger()
-    logger.setLevel(logging.DEBUG)
     filehandler = logging.FileHandler('/tmp/process.log'.format(datetime.datetime.now()))
     filehandler.setLevel(logging.INFO)
 
-    if (logger.hasHandlers()):
-        logger.handlers.clear()
+    if (logging.hasHandlers()):
+        logging.handlers.clear()
 
-    logger.addHandler(filehandler)
-    logger.info('START Timestamp: {}'.format(datetime.datetime.now()))
+    logging.addHandler(filehandler)
+    logging.info('START Timestamp: {}'.format(datetime.datetime.now()))
 
     source_bucket = STORAGE_CLIENT.get_bucket(bucket_name)
     source_blob = source_bucket.get_blob(blob_name)
@@ -88,19 +80,18 @@ def cp_blob(
                     new_blob_name)
         try:
             response = requests.post(url, headers = access_token)
-            logger.info('rewriting {} to {}\n'.format(source_blob.name, new_blob_name))
+            logging.info('rewriting {} to {}\n'.format(source_blob.name, new_blob_name))
             print('rewriting {} to {}\n'.format(source_blob.name, new_blob_name))
             if ('done' not in response.json()):
-                logger.info('rewrite operation failed with the following error: {}'.format(response.text))
+                logging.info('rewrite operation failed with the following error: {}'.format(response.text))
                 print('rewrite operation failed with the following error: {}'.format(response.text))
             else:
-                logger.info('rewrite operation successful!')
+                logging.info('rewrite operation successful!')
                 print('rewrite operation successful!')
         except Exception as e:
-            logger.info('Error: {}'.format(e))
+            logging.info('Error: {}'.format(e))
             print('Error: {}'.format(e))
     else:
         #copy to new destination
-        new_blob = source_bucket.copy_blob(source_blob, destination_bucket, new_blob_name)
-        logger.info('copied {} to {}\n'.format(source_blob.name, new_blob_name))
+        logging.info('copied {} to {}\n'.format(source_blob.name, new_blob_name))
         print('copied {} to {}\n'.format(source_blob.name, new_blob_name))            

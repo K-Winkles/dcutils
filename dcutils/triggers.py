@@ -1,9 +1,5 @@
-from google.cloud import storage
 import logging
 import datetime
-
-logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
 
 def newly_uploaded_blobs(
     STORAGE_CLIENT,
@@ -15,14 +11,14 @@ def newly_uploaded_blobs(
     filehandler = logging.FileHandler('/tmp/newly_uploaded.log')
     filehandler.setLevel(logging.INFO)
 
-    if (logger.hasHandlers()):
-        logger.handlers.clear()
+    if (logging.hasHandlers()):
+        logging.handlers.clear()
 
-    logger.addHandler(filehandler)
-    logger.info('NEWLY UPLOADED BLOBS')
-    logger.info('SOURCE BUCKET: {}'.format(SRC_BUCKET))
-    logger.info('DEST_BUCKET: {}'.format(DEST_BUCKET))
-    logger.info('TIMESTAMP: {}'.format(datetime.datetime.now()))
+    logging.addHandler(filehandler)
+    logging.info('NEWLY UPLOADED BLOBS')
+    logging.info('SOURCE BUCKET: {}'.format(SRC_BUCKET))
+    logging.info('DEST_BUCKET: {}'.format(DEST_BUCKET))
+    logging.info('TIMESTAMP: {}'.format(datetime.datetime.now()))
     
     current_blobs_itr = STORAGE_CLIENT.list_blobs(DEST_BUCKET)
     src_blobs = STORAGE_CLIENT.list_blobs(SRC_BUCKET)
@@ -37,7 +33,7 @@ def newly_uploaded_blobs(
         if PARENT_FOLDER in folders[depth]:
             if blob.name not in current_blobs:
                 new_blobs.append(blob)
-                logger.info('{}'.format(blob.name))
+                logging.info('{}'.format(blob.name))
     if len(new_blobs) == 0:
-        logger.info('{} is updated with respect to {}'.format(DEST_BUCKET, SRC_BUCKET))
+        logging.info('{} is updated with respect to {}'.format(DEST_BUCKET, SRC_BUCKET))
     return new_blobs

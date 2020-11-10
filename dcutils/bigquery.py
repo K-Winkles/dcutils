@@ -8,17 +8,6 @@ def create_table(client, datasetId, name, schema):
     # clean datasetId
     datasetId = quote(datasetId, safe='')
 
-    # initialize logger
-    logger = logging.getLogger()
-    logger.setLevel(logging.DEBUG)
-    filehandler = logging.FileHandler('/tmp/process.log'.format(datetime.datetime.now()))
-    filehandler.setLevel(logging.INFO)
-
-    if (logger.hasHandlers()):
-        logger.handlers.clear()
-
-    logger.addHandler(filehandler)
-    
     # initialize dataset and table reference
     ds_ref = client.dataset(datasetId)
     tb_ref = ds_ref.table(name)
@@ -29,7 +18,7 @@ def create_table(client, datasetId, name, schema):
     except NotFound:
         table = bq.Table(tb_ref, schema=schema)
         table = client.create_table(table)
-        logger.info('{}: CREATED TABLE {}'.format(datetime.datetime.now(), name))
+        logging.info('{}: CREATED TABLE {}'.format(datetime.datetime.now(), name))
         print('{}: CREATED TABLE {}'.format(datetime.datetime.now(), name))
 
 def insert_row(BQ_client, table_id, row_array):
