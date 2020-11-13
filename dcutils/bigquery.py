@@ -6,7 +6,10 @@ from google.api_core.exceptions import NotFound
 
 def create_table(client, datasetId, name, schema):
     # clean datasetId
-    datasetId = quote(datasetId, safe='')
+    try:
+        datasetId = quote(datasetId, safe='')
+    except TypeError:
+        pass
 
     # initialize dataset and table reference
     ds_ref = client.dataset(datasetId)
