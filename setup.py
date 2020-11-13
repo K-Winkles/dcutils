@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="dcutils",
-    version="0.28",
+    version="0.29",
     author="Kiana Alessandra V. Villaera",
     author_email="kiana.villaera@senti.com.ph",
     description="A simple package for data center utilities",
