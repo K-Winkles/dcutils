@@ -49,15 +49,6 @@ def cp_blob(
     new_bucket_name,
     access_token
     ):
-    filehandler = logging.FileHandler('/tmp/process.log'.format(datetime.datetime.now()))
-    filehandler.setLevel(logging.INFO)
-
-    if (logging.hasHandlers()):
-        logging.handlers.clear()
-
-    logging.addHandler(filehandler)
-    logging.info('START Timestamp: {}'.format(datetime.datetime.now()))
-
     source_bucket = STORAGE_CLIENT.get_bucket(bucket_name)
     source_blob = source_bucket.get_blob(blob_name)
     destination_bucket = STORAGE_CLIENT.get_bucket(new_bucket_name)
@@ -67,31 +58,30 @@ def cp_blob(
     # get size of blob
     blob_size = source_blob.size
 
-    # rewrite of blob greater than 15mb
-    if (blob_size > 15000000):
+    # rewrite of blob greater than 10gb
+    if (blob_size > 10000000000):
         source_bucket_url = quote(source_bucket.name, safe='')
         source_blob_url = quote(source_blob.name, safe='')
         destination_bucket_url = quote(destination_bucket.name, safe='')
         new_blob_name = quote(new_blob_name, safe = '')
+        print('done with string cleaning')
         url = "https://storage.googleapis.com/storage/v1/b/{}/o/{}/rewriteTo/b/{}/o/{}".format(
                     source_bucket_url, 
                     source_blob_url,
                     destination_bucket_url,
                     new_blob_name)
         try:
+            print(url)
+            print(access_token)
             response = requests.post(url, headers = access_token)
-            logging.info('rewriting {} to {}\n'.format(source_blob.name, new_blob_name))
             print('rewriting {} to {}\n'.format(source_blob.name, new_blob_name))
             if ('done' not in response.json()):
-                logging.info('rewrite operation failed with the following error: {}'.format(response.text))
                 print('rewrite operation failed with the following error: {}'.format(response.text))
             else:
-                logging.info('rewrite operation successful!')
                 print('rewrite operation successful!')
         except Exception as e:
-            logging.info('Error: {}'.format(e))
             print('Error: {}'.format(e))
     else:
         #copy to new destination
-        logging.info('copied {} to {}\n'.format(source_blob.name, new_blob_name))
-        print('copied {} to {}\n'.format(source_blob.name, new_blob_name))            
+        source_bucket.copy_blob(source_blob, destination_bucket, new_blob_name)
+        print('copied {} to {}\n'.format(source_blob.name, new_blob_name))         
